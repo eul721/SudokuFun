@@ -1,5 +1,6 @@
 #include "gui.h"
 #include "requestdialog.h"
+#include "Grid.h"
 
 
 gui::gui(QWidget *parent)
@@ -10,6 +11,7 @@ gui::gui(QWidget *parent)
 	const int gridSize = request.ask(RequestDialog::REQUESTINGGRIDSIZE);
 	const int sudokuSize = request.ask(RequestDialog::REQUESTINGSUDOKUSIZE);
 	ui.setupUi(this);
+
 }
 
 gui::~gui()

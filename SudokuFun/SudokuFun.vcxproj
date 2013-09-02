@@ -99,6 +99,7 @@
     <ClCompile Include="gui.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="requestdialog.cpp" />
+    <ClCompile Include="Sudoku.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="gui.h">
@@ -128,6 +129,7 @@
     <ClInclude Include="GeneratedFiles\ui_gui.h" />
     <ClInclude Include="GeneratedFiles\ui_requestdialog.h" />
     <ClInclude Include="Grid.h" />
+    <ClInclude Include="Sudoku.h" />
     <CustomBuild Include="requestdialog.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing requestdialog.h...</Message>
