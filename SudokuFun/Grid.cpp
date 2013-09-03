@@ -14,16 +14,18 @@
 	to shuffle them.
 -----------------------------------------*/
 Grid::Grid(void)
-	:gridSize(3*3),dimSize(3),elements(std::vector<Field>(3*3))
+	:gridSize(3*3),dimSize(3),elements(std::vector<Field*>(gridSize,NULL))
 {
 	//fill in a number into each position of an array, according to index
 	//initialize the grid such that at the buttom it is actually filled with number, but may not be visible depending on boolean [filled].
 	for (int i=0;i<gridSize;i++){
-		elements[i].value = 0;
-		elements[i].filled = false;
-		elements[i].userAttemptedValue = 0;
+		elements[i] = new Field;
+		elements[i]->value = 0;
+		elements[i]->filled = false;
+		elements[i]->userAttemptedValue = 0;
+		elements[i]->belongsTo = this;
 	}
-	
+
 	std::random_shuffle(elements.begin(),elements.end());
 
 }
@@ -33,6 +35,8 @@ Grid::Grid(void)
 -----------------------------------------*/
 Grid::~Grid(void)
 {
+	for (int i=0;i<gridSize;i++)
+		delete elements[i];
 }
 
 /*----------------------------------------
@@ -43,13 +47,15 @@ Grid::~Grid(void)
 	to shuffle them.
 -----------------------------------------*/
 Grid::Grid(const int gridDimSize)
-	:gridSize(gridDimSize*gridDimSize),dimSize(gridDimSize),elements(std::vector<Field>(gridDimSize*gridDimSize))
+	:gridSize(gridDimSize*gridDimSize),dimSize(gridDimSize),elements(std::vector<Field*>(gridSize,NULL))
 {
 	//fill in a number into each position of an array, according to index
 	for (int i=0;i<this->gridSize;i++){
-		elements[i].value = 0;
-		elements[i].filled = false;
-		elements[i].userAttemptedValue = 0;
+		elements[i] = new Field;
+		elements[i]->value = 0;
+		elements[i]->filled = false;
+		elements[i]->userAttemptedValue = 0;
+		elements[i]->belongsTo = this;
 	}
 	std::random_shuffle(elements.begin(),elements.end());
 }
@@ -59,9 +65,13 @@ Grid::Grid(const int gridDimSize)
 	purposes
 -----------------------------------------*/
 Grid::Grid(const Grid& oriGrid) :
-	gridSize(oriGrid.gridSize),dimSize(oriGrid.dimSize),elements(oriGrid.elements)
+	gridSize(oriGrid.gridSize),dimSize(oriGrid.dimSize),elements(std::vector<Field*>(gridSize,NULL))
 {
 	
+	for (int i=0;i<this->gridSize;i++){
+		elements[i]->belongsTo = this;
+	}
+
 	std::random_shuffle(elements.begin(),elements.end());
 }
 
@@ -80,19 +90,18 @@ Grid& Grid::operator=(const Grid& newGrid)
 	A function that checks if a grid violates
 	Sudoku grid condition. 
 -----------------------------------------*/
-bool Grid::isViolated() const
+bool Grid::isViolated(const std::vector<int>& comparisonVector) const
 {
-	static const std::vector<Field>comparisonVector(generateComparisonVec(gridSize));
-	std::vector<Field>renewedComparisonVector(comparisonVector);
-	for (std::vector<Field>::const_iterator it = elements.begin();
+	std::vector<int>renewedComparisonVector(comparisonVector);
+	for (std::vector<Field*>::const_iterator it = elements.cbegin();
 		it != elements.end();
 		it++)
 	{
-		if (it->value == 0)
+		if ((*it)->value == 0)
 		{
 			//0 means the field has yet to be filled. ignore.
 		}
-		else if (!find(it,renewedComparisonVector))
+		else if (!find((*it)->userAttemptedValue,renewedComparisonVector))
 			return true;
 	}
 
@@ -102,9 +111,9 @@ bool Grid::isViolated() const
 /*----------------------------------------
 	Retrieve row elements
 -----------------------------------------*/
-std::vector<Field> Grid::getRowElements(int rowNum) const
+const std::vector<Field*> Grid::getRowElements(int rowNum) const
 {
-	std::vector<Field> row;
+	std::vector<Field*> row;
 	for (int i=0;i<dimSize;i++)
 		row.push_back(elements.at((rowNum-1)*dimSize+i));
 
@@ -113,13 +122,18 @@ std::vector<Field> Grid::getRowElements(int rowNum) const
 /*----------------------------------------
 	Retrieve col elements
 -----------------------------------------*/
-std::vector<Field> Grid::getColElements(int colNum) const
+const std::vector<Field*> Grid::getColElements(int colNum) const
 {
-	std::vector<Field> col;
+	std::vector<Field*> col;
 	for (int i=0;i<dimSize;i++)
 		col.push_back(elements.at(i*dimSize + (colNum - 1)));
 
 	return col;
+}
+
+const std::vector<Field*> Grid::getGridElements() const
+{
+	return elements;
 }
 
 /*----------------------------------------
@@ -139,6 +153,7 @@ std::vector<Field> Grid::generateComparisonVec(int gridSize) const {
 	return comp;
 }
 
+
 /*----------------------------------------
 	This function checks whether the provided
 	value at *cit can be found in comparison vector.
@@ -146,11 +161,11 @@ std::vector<Field> Grid::generateComparisonVec(int gridSize) const {
 	from the comparison vector and return true. Else, just
 	return false.
 -----------------------------------------*/
-const bool Grid::find(const std::vector<Field>::const_iterator& cit, std::vector<Field>& reference) const{
-	for (std::vector<Field>::iterator rit = reference.begin();
+const bool Grid::find(const int valToFind, std::vector<int>& reference) const{
+	for (std::vector<int>::iterator rit = reference.begin();
 		rit!=reference.end();
 		rit++){
-			if (cit->userAttemptedValue == rit->value){
+			if (valToFind == *rit){
 				reference.erase(rit);
 				return true;}
 	}
@@ -166,13 +181,13 @@ void Grid::fill(int fieldNum,const int newVal,const fillOption fillO = PLAYER)
 	fieldNum--;
 	if (fillO == GENERATOR)
 	{
-		elements[fieldNum].value = newVal;
+		elements[fieldNum]->value = newVal;
 	}
 	else
 	{
-		if (!elements[fieldNum].filled)
-			elements[fieldNum].filled = true;
+		if (!elements[fieldNum]->filled)
+			elements[fieldNum]->filled = true;
 	}
-		elements[fieldNum].userAttemptedValue = newVal;
+		elements[fieldNum]->userAttemptedValue = newVal;
 
 }
