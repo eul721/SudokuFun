@@ -1,4 +1,4 @@
 SudokuFun
 =========
 
-Sudoku Solver
+Sudoku Solver + Generator of arbitrary grid dimensions.
