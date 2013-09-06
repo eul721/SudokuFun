@@ -10,13 +10,14 @@ bool find(const Field* target, const std::vector<Field*>* refVec);
 	Still invalid.
 -----------------------------------------*/
 Sudoku::Sudoku(void):
-	Grid(3),sudokuDimSize(3*3),grids(std::vector<Grid*>(3))
+	Grid(3),sudokuDimSize(3*3),grids(std::vector<Grid*>(3*3))
 {
 	std::srand((unsigned)std::time(0));
 	for (int i=0;i<sudokuDimSize;i++)
 		grids[i] = new Grid(dimSize);
 
 	initializeComparisonVector();
+	generate(1,1);
 
 
 }
@@ -33,6 +34,7 @@ Sudoku::Sudoku(const int size):
 		grids[i] = new Grid(dimSize);
 
 	initializeComparisonVector();
+	generate(1,1);
 }
 
 
@@ -43,12 +45,7 @@ Sudoku::~Sudoku(void)
 		delete grids[i];
 }
 
-Sudoku::Sudoku(const Sudoku& oriSudoku):
-	Grid(oriSudoku.dimSize),sudokuDimSize(oriSudoku.sudokuDimSize),grids(oriSudoku.grids)
-{
 
-	
-}
 
 /*----------------------------------------
 	Checks if sudoku is violated.

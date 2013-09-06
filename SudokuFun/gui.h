@@ -14,6 +14,7 @@ public:
 
 private:
 	Ui::guiClass ui;
+	void adjustAreaSize();
 };
 
 #endif // GUI_H

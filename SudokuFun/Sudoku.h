@@ -8,7 +8,6 @@ public:
 	Sudoku(void);
 	Sudoku(const int dimsize);
 	~Sudoku(void);
-	Sudoku(const Sudoku&);
 	virtual bool isViolated() const;
 	virtual void fill(int,int,int,fillOption);
 
