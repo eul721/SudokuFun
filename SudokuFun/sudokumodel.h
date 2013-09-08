@@ -14,6 +14,11 @@ public:
 	~sudokuModel();
 	int getGridDimensions() const {return gridDimensions;}
 	
+	enum MSGTYPE{
+		OUTOFRANGE = 0,
+		SUDOKUCOMPLETED = 1,
+		AUTOCOMPLETEFAILED = 2
+	};
 
 	int rowCount(const QModelIndex &parent = QModelIndex()) const;
 	int columnCount(const QModelIndex &parent = QModelIndex()) const;
@@ -23,15 +28,19 @@ public:
 	Qt::ItemFlags flags(const QModelIndex &index) const;
 signals:
 	void editCompleted(int);
+	void invokeMessageBox(sudokuModel::MSGTYPE);
 public slots:
 	void resetModel();
 	void generateNew();
+	
 
 private:
 	int sudokuDimensions;
 	int gridDimensions;
 	Sudoku* sudoku;
 	Sudoku resetTarget;
+private slots:
+	void autoComplete();
 };
 
 #endif // SUDOKUMODEL_H

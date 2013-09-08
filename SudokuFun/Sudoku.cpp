@@ -256,12 +256,9 @@ void Sudoku::fill(int rowNum, int colNum,int newVal,fillOption fillO)
 	if (fillO == GENERATOR)
 	{
 		field->value = newVal;
+		field->filled = newVal==0? false : true;
 	}
-	else
-	{
-		if (!field->filled)
-			field->filled = true;
-	}
+
 		field->userAttemptedValue = newVal;
 }
 
@@ -340,7 +337,7 @@ bool find(const int target, const std::vector<Field*>* refVec)
 	for (std::vector<Field*>::const_iterator cit = refVec->cbegin();
 		cit != refVec->cend();
 		cit++){
-		if ((*cit)->userAttemptedValue == target)
+		if ((*cit)->userAttemptedValue == target && (*cit)->filled)
 			return true;
 	}
 	return false;

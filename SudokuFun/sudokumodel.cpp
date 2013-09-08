@@ -77,8 +77,12 @@ void sudokuModel::generateNew()
 bool sudokuModel::setData(const QModelIndex& index, const QVariant& value,int role)
 {
 	if(role==Qt::EditRole){
+		if (value.toInt()<1 ||value.toInt()>sudokuDimensions){
+			emit invokeMessageBox(OUTOFRANGE);
+		}
+		else{
 		sudoku->fill(index.row()+1,index.column()+1,value.toInt(),Grid::PLAYER);
-		emit editCompleted(value.toInt());
+		emit editCompleted(value.toInt());}
 	}
 	return true;
 
@@ -89,4 +93,11 @@ bool sudokuModel::setData(const QModelIndex& index, const QVariant& value,int ro
 Qt::ItemFlags sudokuModel::flags(const QModelIndex &index) const
 {
 	return Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+}
+
+void sudokuModel::autoComplete(){
+	if (sudoku->generate(1,1))
+		emit invokeMessageBox(SUDOKUCOMPLETED);
+	else
+		emit invokeMessageBox(AUTOCOMPLETEFAILED);
 }
