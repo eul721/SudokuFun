@@ -9,11 +9,8 @@ sudokuModel::sudokuModel(QObject *parent)
 }
 
 sudokuModel::sudokuModel(int dim)
-	:sudokuDimensions(dim*dim),gridDimensions(dim),sudoku(new Sudoku(dim)),resetTarget(*sudoku)
+	:sudokuDimensions(dim*dim),gridDimensions(dim),sudoku(new Sudoku(dim)),resetTarget(new Sudoku(*sudoku))
 {
-	sudoku->fill(1,1,1,Grid::PLAYER);
-	sudoku->fill(1,2,1,Grid::PLAYER);
-	resetModel();
 }
 
 sudokuModel::~sudokuModel()
@@ -60,7 +57,7 @@ int sudokuModel::columnCount(const QModelIndex &parent) const{
 void sudokuModel::resetModel()
 {
 	delete sudoku; //delete original model first
-	sudoku =  new Sudoku(resetTarget);
+	sudoku =  new Sudoku(*resetTarget);
 
 	emit dataChanged(createIndex(0,0),createIndex(sudokuDimensions-1,sudokuDimensions-1));
 }
@@ -69,7 +66,8 @@ void sudokuModel::generateNew()
 {
 	delete sudoku;
 	sudoku = new Sudoku(gridDimensions);
-	resetTarget  = *sudoku;
+	delete resetTarget;
+	resetTarget = new Sudoku(*sudoku);
 
 	emit dataChanged(createIndex(0,0),createIndex(sudokuDimensions-1,sudokuDimensions-1));
 }

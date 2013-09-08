@@ -38,7 +38,7 @@ private:
 	int sudokuDimensions;
 	int gridDimensions;
 	Sudoku* sudoku;
-	Sudoku resetTarget;
+	Sudoku* resetTarget;
 private slots:
 	void autoComplete();
 };

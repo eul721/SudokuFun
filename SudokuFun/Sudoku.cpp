@@ -256,9 +256,9 @@ void Sudoku::fill(int rowNum, int colNum,int newVal,fillOption fillO)
 	if (fillO == GENERATOR)
 	{
 		field->value = newVal;
-		field->filled = newVal==0? false : true;
+		
 	}
-
+		field->filled = newVal==0? false : true;
 		field->userAttemptedValue = newVal;
 }
 
