@@ -61,18 +61,21 @@ Grid::Grid(const int gridDimSize)
 }
 
 /*----------------------------------------
-	Copy Constructor that quickens generation
-	purposes
+	Copy Constructor that will be used 
+	when a backup grid (Sudoku) is needed.
 -----------------------------------------*/
 Grid::Grid(const Grid& oriGrid) :
 	gridSize(oriGrid.gridSize),dimSize(oriGrid.dimSize),elements(std::vector<Field*>(gridSize,NULL))
 {
 	
 	for (int i=0;i<this->gridSize;i++){
+		elements[i] = new Field;
+		elements[i]->filled = oriGrid.elements[i]->filled;
+		elements[i]->userAttemptedValue = oriGrid.elements[i]->userAttemptedValue;
+		elements[i]->value = oriGrid.elements[i]->value;
 		elements[i]->belongsTo = this;
 	}
 
-	std::random_shuffle(elements.begin(),elements.end());
 }
 
 /*----------------------------------------
@@ -190,4 +193,8 @@ void Grid::fill(int fieldNum,const int newVal,const fillOption fillO = PLAYER)
 	}
 		elements[fieldNum]->userAttemptedValue = newVal;
 
+}
+
+const Field* Grid::getField(int index) const{
+	return elements[index];
 }

@@ -23,6 +23,7 @@ public:
 	enum fillOption {GENERATOR = 0, PLAYER = 1};
 	
 	//these are provided for sudoku class to use
+	const Field* getField(int index) const;
 	const virtual std::vector<Field*> getRowElements(int rowNum) const;
 	const virtual std::vector<Field*> getColElements(int colNum) const;
 	const virtual std::vector<Field*> getGridElements() const;

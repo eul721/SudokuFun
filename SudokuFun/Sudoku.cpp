@@ -18,6 +18,7 @@ Sudoku::Sudoku(void):
 
 	initializeComparisonVector();
 	generate(1,1);
+	randomizeFilledRatio();
 
 
 }
@@ -35,8 +36,26 @@ Sudoku::Sudoku(const int size):
 
 	initializeComparisonVector();
 	generate(1,1);
+	randomizeFilledRatio();
 }
 
+Sudoku::Sudoku(const Sudoku& ori):
+	Grid(ori.dimSize),sudokuDimSize(ori.sudokuDimSize),grids(std::vector<Grid*>(sudokuDimSize,new Grid(dimSize))),
+	comparisonVector(ori.comparisonVector)
+{
+	for (int i=0;i<sudokuDimSize;++i){
+		grids[i] = new Grid(*ori.grids[i]);
+	}
+
+}
+
+Sudoku& Sudoku::operator=(const Sudoku& rhs){
+	for (int i=0;i<sudokuDimSize;++i){
+		*grids[i] = *rhs.grids[i];
+	}
+
+	return *this;
+}
 
 
 Sudoku::~Sudoku(void)
@@ -109,14 +128,42 @@ bool Sudoku::checkColViolation(const int colNum) const
 	return false;
 
 }
-
+/*
+	This function will be used not only to generate 
+	initial grid, but also for auto-completion function.
+	It uses a recursive algorithm that implements depth first search
+*/
 bool Sudoku::generate(int rowNum,int colNum)
 {
 	if (rowNum > sudokuDimSize)
 		return true;
+
+	const Field* currentField = getField(rowNum,colNum); //get current field
+	//if the current field is already filled by the user, skip.
+	if (currentField->filled == true){ 
+		int nextFieldRowNum = 0, nextFieldColNum = 0;
+			if (colNum + 1 > sudokuDimSize) //if at the end of a row
+			{
+				nextFieldRowNum = rowNum + 1;
+				nextFieldColNum = 1;
+			}
+			else //if not, just the field beside it
+			{
+				nextFieldRowNum = rowNum;
+				nextFieldColNum = colNum + 1;
+			}
+
+			if (generate(nextFieldRowNum,nextFieldColNum))
+				return true;
+			else
+				return false;
+	}
+
+
+	
 	
 	//Get a vector of possible values for the field at [rowNum]x[colNum]
-	std::vector<int> possibleValues = removeConflictValues(getField(rowNum,colNum));
+	std::vector<int> possibleValues = removeConflictValues(currentField);
 	std::random_shuffle(possibleValues.begin(),possibleValues.end());
 	
 	//prepare an iterator for iterating through the values in [possibleValues]
@@ -261,12 +308,32 @@ std::vector<int> Sudoku::removeConflictValues(const Field* refField) const
 	return refreshedVec;
 	
 }
-
-Field* Sudoku::getField(int rowNum,int colNum)
+/*
+*/
+const Field* Sudoku::getField(int rowNum,int colNum) const
 {
 	std::vector<Field*> row = getRowElements(rowNum);
 	return row[colNum-1];
 }
+Field* Sudoku::getField(int rowNum,int colNum)
+{
+	return const_cast<Field*>(static_cast<const Sudoku*>(this)->getField(rowNum,colNum));
+}
+
+/*
+
+*/
+void Sudoku::randomizeFilledRatio()
+{
+	for (int row=1;row<=sudokuDimSize;row++){
+		for (int col=1;col<=sudokuDimSize;col++){
+			getField(row,col)->filled = (rand() % 2)==1? true : false;
+		}
+	}
+
+}
+
+
 
 bool find(const int target, const std::vector<Field*>* refVec)
 {
@@ -288,4 +355,9 @@ bool find(const Field* target, const std::vector<Field*>* refVec)
 			return true;
 	}
 	return false;
+}
+
+void Sudoku::resetSudoku()
+{
+
 }

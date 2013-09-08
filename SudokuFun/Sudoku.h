@@ -7,16 +7,21 @@ class Sudoku :
 public:
 	Sudoku(void);
 	Sudoku(const int dimsize);
+	Sudoku(const Sudoku&);
+	Sudoku& operator=(const Sudoku&);
 	~Sudoku(void);
 	virtual bool isViolated() const;
 	virtual void fill(int,int,int,fillOption);
 
+	int getSudokuDimSize(){ return sudokuDimSize;}
+	int getGridDimSize(){ return dimSize;}
+	
 
-	//for debugging purposes
-	Field* getField(int rowNum,int colNum);
-
+	const Field* getField(int rowNum,int colNum) const;
+	Field* getField(int, int);
 	std::vector<int> removeConflictValues(const Field*) const;
 	bool generate(int rowNum, int colNum);
+	void resetSudoku();
 private:
 	const int sudokuDimSize;
 	std::vector<int> comparisonVector;
@@ -24,6 +29,7 @@ private:
 	bool checkRowViolation(int) const;
 	bool checkMainRowViolation(int) const;
 	bool checkColViolation(int) const;
+	void randomizeFilledRatio();
 	
 	void initializeComparisonVector();
 	const virtual std::vector<Field*> getRowElements(int) const;
@@ -31,6 +37,8 @@ private:
 	const virtual std::vector<Field*> getRowElements(const Field*) const;
 	const virtual std::vector<Field*> getColElements(const Field*) const;
 	const virtual std::vector<Field*> getGridElements(const Field*) const;
+
+	
 	
 };
 

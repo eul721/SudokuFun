@@ -12,15 +12,26 @@ public:
 	sudokuModel(QObject *parent);
 	sudokuModel(int);
 	~sudokuModel();
+	int getGridDimensions() const {return gridDimensions;}
+	
 
 	int rowCount(const QModelIndex &parent = QModelIndex()) const;
 	int columnCount(const QModelIndex &parent = QModelIndex()) const;
-	int dimCount(const QModelIndex &parent = QModelIndex()) const;
+	int getSudokuDimensions() const;
+	bool setData(const QModelIndex& index, const QVariant& value,int role);
 	QVariant data(const QModelIndex &index , int role) const;
+	Qt::ItemFlags flags(const QModelIndex &index) const;
+signals:
+	void editCompleted(int);
+public slots:
+	void resetModel();
+	void generateNew();
 
 private:
 	int sudokuDimensions;
+	int gridDimensions;
 	Sudoku* sudoku;
+	Sudoku resetTarget;
 };
 
 #endif // SUDOKUMODEL_H

@@ -48,7 +48,7 @@ public:
     {
         if (guiClass->objectName().isEmpty())
             guiClass->setObjectName(QStringLiteral("guiClass"));
-        guiClass->resize(937, 708);
+        guiClass->resize(989, 852);
         QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -67,6 +67,12 @@ public:
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         sudokuArea = new QTableView(centralWidget);
         sudokuArea->setObjectName(QStringLiteral("sudokuArea"));
+        QSizePolicy sizePolicy1(QSizePolicy::Minimum, QSizePolicy::Minimum);
+        sizePolicy1.setHorizontalStretch(0);
+        sizePolicy1.setVerticalStretch(0);
+        sizePolicy1.setHeightForWidth(sudokuArea->sizePolicy().hasHeightForWidth());
+        sudokuArea->setSizePolicy(sizePolicy1);
+        sudokuArea->setMinimumSize(QSize(800, 800));
 
         horizontalLayout->addWidget(sudokuArea);
 

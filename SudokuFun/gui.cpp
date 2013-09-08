@@ -1,7 +1,6 @@
 #include "gui.h"
 #include "requestdialog.h"
 #include "Grid.h"
-#include "sudokumodel.h"
 
 gui::gui(QWidget *parent)
 	: QMainWindow(parent)
@@ -12,10 +11,13 @@ gui::gui(QWidget *parent)
 	const int sudokuSize = request.ask(RequestDialog::REQUESTINGSUDOKUSIZE);
 	
 	ui.setupUi(this);
-	sudokuModel* model = new sudokuModel(sudokuSize);
-	this->ui.sudokuArea->setModel(model);
-	this->ui.sudokuArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	model = new sudokuModel(sudokuSize);
+	ui.sudokuArea->setModel(model);
+
+	ui.sudokuArea->setEditTriggers(QAbstractItemView::DoubleClicked);
 	adjustAreaSize();
+	QObject::connect(ui.resetButton,SIGNAL(clicked()),model,SLOT(resetModel()));
+	QObject::connect(ui.regenerateButton,SIGNAL(clicked()),model,SLOT(generateNew()));
 }
 
 gui::~gui()
@@ -25,9 +27,29 @@ gui::~gui()
 
 void gui::adjustAreaSize()
 {
+	ui.sudokuArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	ui.sudokuArea->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+	ui.sudokuArea->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 	ui.sudokuArea->resizeColumnsToContents();
-	QRect rect = ui.sudokuArea->geometry();
-	rect.setWidth(2+ ui.sudokuArea->verticalHeader()->width() + ui.sudokuArea->columnWidth(0) * ui.sudokuArea->model()->columnCount());
-	ui.sudokuArea->setGeometry(rect);
+	ui.sudokuArea->resizeRowsToContents();
+
+	//rect.setWidth(2+ ui.sudokuArea->verticalHeader()->width() + ui.sudokuArea->columnWidth(0) * ui.sudokuArea->model()->columnCount());
+	//ui.sudokuArea->setGeometry(rect);
 
 }
+
+/*
+	Initializes bold borders for sudoku grids
+*/
+void gui::initializeBoldBorders()
+{
+	int gridDim= model->getGridDimensions();
+	int sudokuDim = model->getGridDimensions();
+
+}
+
+void gui::resetAndUpdate()
+{
+	model->resetModel();
+}
+
