@@ -80,7 +80,10 @@ bool sudokuModel::setData(const QModelIndex& index, const QVariant& value,int ro
 		}
 		else{
 		sudoku->fill(index.row()+1,index.column()+1,value.toInt(),Grid::PLAYER);
-		emit editCompleted(value.toInt());}
+		emit editCompleted(value.toInt());
+		if (sudoku->sudokuComplete() && !sudoku->isViolated())
+			emit invokeMessageBox(SUDOKUCOMPLETED);
+		}
 	}
 	return true;
 

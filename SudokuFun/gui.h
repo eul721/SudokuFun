@@ -25,10 +25,14 @@ private:
 	sudokuModel* model;
 	void adjustAreaSize();
 	void initializeBoldBorders();
+	QTimer *timer;
+	int curTime;
 	
 private slots:
 	void resetAndUpdate();
 	void displayMessageBox(sudokuModel::MSGTYPE);
+	void timerUpdate();
+	void timerReset();
 	
 	
 };

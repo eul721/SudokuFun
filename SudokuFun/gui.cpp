@@ -2,6 +2,7 @@
 #include "requestdialog.h"
 #include "Grid.h"
 #include "qmessagebox.h"
+#include "qtimer.h"
 
 gui::gui(QWidget *parent)
 	: QMainWindow(parent)
@@ -14,13 +15,23 @@ gui::gui(QWidget *parent)
 	ui.setupUi(this);
 	model = new sudokuModel(sudokuSize);
 	ui.sudokuArea->setModel(model);
-
 	ui.sudokuArea->setEditTriggers(QAbstractItemView::DoubleClicked);
 	adjustAreaSize();
+
+	curTime = 0;
+	timer = new QTimer(this);
+	timer->start(1000);
+	ui.timer->display("00:00");
+	
+	
+
 	QObject::connect(ui.resetButton,SIGNAL(clicked()),model,SLOT(resetModel()));
 	QObject::connect(ui.regenerateButton,SIGNAL(clicked()),model,SLOT(generateNew()));
+	QObject::connect(ui.resetButton,SIGNAL(clicked()),this,SLOT(timerReset()));
+	QObject::connect(ui.regenerateButton,SIGNAL(clicked()),this,SLOT(timerReset()));
 	QObject::connect(ui.autoButton,SIGNAL(clicked()),model,SLOT(autoComplete()));
 	QObject::connect(model,SIGNAL(invokeMessageBox(sudokuModel::MSGTYPE)),this,SLOT(displayMessageBox(sudokuModel::MSGTYPE)));
+	QObject::connect(timer,SIGNAL(timeout()),this,SLOT(timerUpdate()));
 }
 
 gui::~gui()
@@ -69,6 +80,7 @@ void gui::displayMessageBox(sudokuModel::MSGTYPE msgtype){
 		msgbox.exec();
 										 }break;
 	case sudokuModel::SUDOKUCOMPLETED:{
+		timer->stop();
 		msgbox.setText("Sudoku Completed!");
 		msgbox.exec();
 									  }
@@ -79,3 +91,20 @@ void gui::displayMessageBox(sudokuModel::MSGTYPE msgtype){
 	}
 
 }
+
+void gui::timerUpdate(){
+	curTime++;
+	int minutes = curTime/60;
+	QString dismin = minutes < 10? "0" + QString::number(minutes) : QString::number(minutes);
+	int seconds = curTime%60;
+	QString dissec = seconds < 10? "0" + QString::number(seconds) : QString::number(seconds);
+
+	ui.timer->display(dismin + ":" + dissec);
+}
+
+void gui::timerReset(){
+	curTime = 0;
+	timer->start(1000);
+	ui.timer->display("00:00");
+}
+

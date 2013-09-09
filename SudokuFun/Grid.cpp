@@ -198,3 +198,14 @@ void Grid::fill(int fieldNum,const int newVal,const fillOption fillO = PLAYER)
 const Field* Grid::getField(int index) const{
 	return elements[index];
 }
+
+bool Grid::gridComplete() const{
+	for (std::vector<Field*>::const_iterator cit = elements.cbegin();
+		cit!=elements.cend();
+		cit++){
+			if ((*cit)->filled==false)
+				return false;
+	}
+	return true;
+
+}

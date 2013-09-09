@@ -28,7 +28,7 @@ public:
 	const virtual std::vector<Field*> getColElements(int colNum) const;
 	const virtual std::vector<Field*> getGridElements() const;
 	bool isViolated(const std::vector<int>& comparisonVector) const;
-
+	bool gridComplete() const;
 	//for debugging purposes
 	void fill(int fieldNum,const int newVal,const fillOption fillO);
 	

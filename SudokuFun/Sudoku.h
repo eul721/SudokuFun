@@ -22,6 +22,7 @@ public:
 	std::vector<int> removeConflictValues(const Field*) const;
 	bool generate(int rowNum, int colNum);
 	void resetSudoku();
+	bool sudokuComplete() const;
 private:
 	const int sudokuDimSize;
 	std::vector<int> comparisonVector;

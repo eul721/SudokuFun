@@ -358,3 +358,15 @@ void Sudoku::resetSudoku()
 {
 
 }
+
+bool Sudoku::sudokuComplete() const {
+	for (std::vector<Grid*>::const_iterator cit=grids.cbegin();
+		cit!=grids.cend();
+		cit++){
+			if (!((*cit)->gridComplete()))
+				return false;
+	}
+	return true;
+
+
+}
